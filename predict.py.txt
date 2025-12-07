@@ -1,0 +1,44 @@
+# predict.py — simple image prediction script
+import os, sys
+import numpy as np
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+
+BASE_DIR = os.path.dirname(_file_)
+MODEL_LOCAL = os.path.join(BASE_DIR, "best_model.h5")
+MODEL_DOWNLOAD_HINT = "If model not present, download from the link in README and place it as best_model.h5"
+
+# load class indices mapping (class_indices.npy)
+mapping_file = os.path.join(BASE_DIR, "class_indices.npy")
+if os.path.exists(mapping_file):
+    class_indices = np.load(mapping_file, allow_pickle=True).item()
+    idx_to_class = {v:k for k,v in class_indices.items()}
+else:
+    print("class_indices.npy not found. Please add it to the repo.")
+    idx_to_class = None
+
+if not os.path.exists(MODEL_LOCAL):
+    print("Model file not found locally.")
+    print(MODEL_DOWNLOAD_HINT)
+    sys.exit(1)
+
+model = load_model(MODEL_LOCAL, compile=False)
+print("Model loaded.")
+
+def predict_image(img_path):
+    img = image.load_img(img_path, target_size=(224,224))
+    x = image.img_to_array(img) / 255.0
+    x = np.expand_dims(x, 0)
+    preds = model.predict(x)[0]
+    idx = int(np.argmax(preds))
+    conf = float(preds[idx])
+    class_name = idx_to_class.get(idx, str(idx)) if idx_to_class else str(idx)
+    return class_name, conf
+
+if _name_ == "_main_":
+    if len(sys.argv) < 2:
+        print("Usage: python predict.py path_to_image.jpg")
+        sys.exit(1)
+    img_path = sys.argv[1]
+    cls, conf = predict_image(img_path)
+    print(f"Predicted: {cls} ({conf*100:.2f}%)")

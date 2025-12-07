@@ -1,0 +1,7 @@
+import json
+REMEDIES = {
+  "Potato___healthy": {"description":"Healthy potato...","remedies":["No action..."]},
+  "...": {...}
+}
+with open("remedies.json","w",encoding="utf-8") as f:
+    json.dump(REMEDIES, f, indent=2, ensure_ascii=False)
