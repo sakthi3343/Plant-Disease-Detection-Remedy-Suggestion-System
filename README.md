@@ -17,8 +17,6 @@ It includes a trained model, prediction scripts, remedies, and a simple web appl
 
 🔧 Installation & Setup
 1️⃣ Clone this repository
-git clone https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git
-cd YOUR-REPO-NAME
 
 2️⃣ Install required libraries
 pip install -r requirements.txt
